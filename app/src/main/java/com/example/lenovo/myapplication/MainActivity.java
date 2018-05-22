@@ -8,24 +8,24 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.lenovo.myapplication.Remote.APIService;
 import com.example.lenovo.myapplication.Remote.ApiUtils;
 import com.example.lenovo.myapplication.Samples.MyPOJO;
+import com.example.lenovo.myapplication.Samples.MyPOJOPARA;
+import com.example.lenovo.myapplication.Samples.OrderMoredetail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.POST;
-import retrofit2.http.POST;
 
 public class MainActivity extends AppCompatActivity {
     final String demoString = "1,21,20,2,5,19";
     int temp;
     TextView mResponseTv;
+    private List<OrderMoredetail> orderMoredetail = new ArrayList<>();
     private APIService mAPIService;
     List<String> strings= Arrays.asList(demoString.split(","));
     ListView  listView;
@@ -53,6 +53,31 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> stringArrayAdapter= new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,strings);
         listView.setAdapter(stringArrayAdapter);
 
+    }
+
+    public void Clickperformpara(View view)
+    {
+        Call<MyPOJOPARA> call = mAPIService.savePostpara(25,3);
+        call.enqueue(new Callback<MyPOJOPARA>() {
+            @Override
+            public void onResponse(Call<MyPOJOPARA> call, Response<MyPOJOPARA> response) {
+                if(response.isSuccessful()) {
+                    MyPOJOPARA myPOJO=response.body();
+                    orderMoredetail=myPOJO.getOrderMoredetail();
+                    Toast.makeText(MainActivity.this, ""+orderMoredetail.get(0).getPCode(), Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(MainActivity.this, " in else", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MyPOJOPARA> call, Throwable t) {
+                Log.e("", "Unable to submit post to API.");
+                Toast.makeText(MainActivity.this, ""+t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     public void sendPost() {
         Toast.makeText(this, "here", Toast.LENGTH_SHORT).show();
